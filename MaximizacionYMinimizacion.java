@@ -47,10 +47,11 @@ public class MaximizacionYMinimizacion {
         for (int i = 0; i < numRestricciones; i++) {
             for (int j = 0; j < numVariables; j++) {
                 tablaSimplex[i][j] = matrizA[i][j];
+                }
                 tablaSimplex[i][numVariables + i] = 1; //agregar las variables de holgura
                 tablaSimplex[i][columnas - 1] = matrizB[i]; //agregar los valores b
     
-            }
+            
         }
         //fila negativa para el punto de maximizar 
         for (int j = 0; j < numVariables; j++) {
@@ -62,7 +63,7 @@ public class MaximizacionYMinimizacion {
             int columnaPivote = encontrarColumnaPivote(tablaSimplex, numRestricciones, columnas);
             if (columnaPivote == -1) {
                 break; //si no hay columna pivote, se termina el proceso
-
+            }
             int filaPivote = encontrarFilaPivote(tablaSimplex, numRestricciones, columnas, columnaPivote);
             if (filaPivote == -1) {
                 System.out.println("El problema no tiene solucion factible.");
@@ -72,12 +73,27 @@ public class MaximizacionYMinimizacion {
             pivotear(tablaSimplex, filaPivote, columnaPivote);
         }
         //mostrar los resultados
+        double [] x = new double[numVariables];
+        for (int j = 0; j < numVariables; j++){
+            int filaVar = esColumnaBasica (tablaSimplex, j, numRestricciones);
+            if (filaVar != -1){
+                x[j] = tablaSimplex[filaVar][columnas -1];
+             }
+            } 
+            System.out.println("Resultado: " );
+            for(int i=0; i<numVariables; i++){
+                System.out.println("X" + (i + 1) + " = " + x[i]);
+            }
+            double valorZ = tablaSimplex[numRestricciones][columnas -1];
+            if (opcion == 2){
+                valorZ = -valorZ;
+
+            }
+            System.out.println("Valor optimo de Z = " + valorZ);
         
 
-
-
-
-    }
+      }
+   
     //funcion para encontrar la columna pivote
     public static int encontrarColumnaPivote(double[][] tablaSimplex, int numRestricciones, int columnas){
         int columnaPivote = -1;
@@ -91,9 +107,9 @@ public class MaximizacionYMinimizacion {
         return columnaPivote;
     }
     //funcion para encontrar la fila pivote
-    public static int encontrarFilaPivote(double[][] tablaSimplex, int columnaPivote, int numRestricciones, int columnas){
+    public static int encontrarFilaPivote(double[][] tablaSimplex, int numRestricciones, int columnas, int columnaPivote){
         int filaPivote = -1;
-        double valorMejor = 0;
+        double valorMejor = Double.MAX_VALUE;
         for (int i=0; i < numRestricciones; i++){
             if (tablaSimplex[i][columnaPivote]>0){
                 double razon = tablaSimplex[i][columnas -1] / tablaSimplex[i][columnaPivote];
@@ -121,8 +137,33 @@ public class MaximizacionYMinimizacion {
     }
     
 
+    public static int esColumnaBasica(double [][] tablaSimplex, int columnas, int numRestricciones){
+        int filaBasica = -1;
+        for(int i = 0; i<numRestricciones; i++){
+            if (tablaSimplex[i][columnas]== 1){
+                if(filaBasica==-1){
+                    filaBasica = i;
+                } else {
+                    return -1; //no es columna basica
+                 }
+                }else if (tablaSimplex[i][columnas] !=0){
+                    return -1; //no es columna basica
+                }
+             }
+            
+            return filaBasica;
+        }
+        
+
+ 
+
+}
+    
+
 
 
  
-}
+
+
+            
 
